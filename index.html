@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  
+  <title>Document</title>
+  <style>
+    body {
+      position: relative;
+      margin:0 auto;
+      box-shadow:none;
+    }
+    .text {
+      margin-top: 200px;
+      text-align: center;
+      color: #BADA55;
+      font-size: 5em;
+    }
+
+    .unicorn {
+      opacity: 0;
+      font-size: 150px;
+      text-align: center;
+    }
+
+    #wrapper{
+    width:100%;
+    height:20px;
+    }
+
+    #sweets{
+    background:white;
+    width:100%;
+    min-height:450px;
+    margin-top:450px;
+    display:inline-block;
+    }
+
+    .ok {
+      visibility: hidden;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="wrapper">
+    <div id="sweets"></div>
+  </div>
+  <p class="text">Unicorn and Donuts</p>
+  <p class="unicorn">🌈🦄</p>
+  
+
+</body>
+
+<script>
+
+const text = document.querySelector('.text');
+const unicorn = document.querySelector('.unicorn');
+
+
+//fadeOut 
+function fadeOut(el) {
+  console.log(el);
+
+  el.style.opacity = 1;
+
+  (function fade() {
+    if ((el.style.opacity -= .1) < 0) {
+      el.style.display = "none";
+    } else {
+      setTimeout(fade, 40);
+    }
+  })();
+
+}
+
+//fadeIn
+function fadeIn(el) {
+  el.style.opacity = 0;
+  el.style.display = "block";
+
+  (function fade() {
+    let val = parseFloat(el.style.opacity);
+    if (!((val += .1) > 1)) {
+      el.style.opacity = val;
+      setTimeout(fade, 60);
+    }
+  })();
+}
+
+function func() {
+  fadeIn(unicorn);
+}
+
+text.addEventListener('click', function() {
+  fadeOut(text);
+  setTimeout(func, 900);
+  setTimeout(startFalling, 3000);
+});
+
+
+
+// The variables below edits the sweetsfall , feel free to edit
+
+var sweetsmax=100;
+
+
+var sweetscolor=new Array("#aaaacc","#ddddff","#ccccdd","#f3f3f3","#f0ffff");
+
+
+var sweetstype=new Array("Times","Arial","Times","Verdana")
+
+//this one in special is funny
+
+var donut = '🍩';
+var cake = '🍰';
+
+
+var sinkspeed=0.6;
+
+
+var sweetsmaxsize=40;
+
+
+var sweetsminsize=12;
+
+var sweetsingzone=1;
+
+//the real deal starts here
+
+var sweets = new Array();
+var marginbottom;
+var marginright;
+var timer;
+var i_sweets=0;
+var x_move=new Array();
+var crds=new Array();
+var lftrght=new Array();
+var browserinfos=navigator.userAgent
+var ie5=document.all&&document.getElementById&&!browserinfos.match(/Opera/);
+var ns6=document.getElementById&&!document.all;
+var opera=browserinfos.match(/Opera/);
+var browserok=ie5||ns6||opera;
+
+function randommaker(range) {
+        rand=Math.floor(range*Math.random())
+    return rand
+}
+
+function initsweets() {
+        if (ie5 || opera) {
+                marginbottom = document.body.scrollHeight
+                marginright = document.body.clientWidth-15
+        }
+        else if (ns6) {
+                marginbottom = document.body.scrollHeight
+                marginright = window.innerWidth-15
+        }
+        var sweetssizerange=sweetsmaxsize-sweetsminsize;
+        for (i=0;i<=sweetsmax;i++) {
+                crds[i] = 0;
+            lftrght[i] = Math.random()*15;
+            x_move[i] = 0.03 + Math.random()/10;
+                sweets[i]=document.getElementById("s"+i)
+                sweets[i].style.fontFamily=sweetstype[randommaker(sweetstype.length)]
+                sweets[i].size=randommaker(sweetssizerange)+sweetsminsize
+                sweets[i].style.fontSize=sweets[i].size+'px';
+                sweets[i].style.color=sweetscolor[randommaker(sweetscolor.length)]
+                sweets[i].style.zIndex=1000
+                sweets[i].sink=sinkspeed*sweets[i].size/5
+                if (sweetsingzone==1) {sweets[i].posx=randommaker(marginright-sweets[i].size)}
+                if (sweetsingzone==2) {sweets[i].posx=randommaker(marginright/2-sweets[i].size)}
+                if (sweetsingzone==3) {sweets[i].posx=randommaker(marginright/2-sweets[i].size)+marginright/4}
+                if (sweetsingzone==4) {sweets[i].posx=randommaker(marginright/2-sweets[i].size)+marginright/2}
+                sweets[i].posy=randommaker(2*marginbottom-marginbottom-2*sweets[i].size)
+                sweets[i].style.left=sweets[i].posx+'px';
+                sweets[i].style.top=sweets[i].posy+'px';
+        }
+        
+        movesweets()
+}
+
+function movesweets() {
+        for (i=0;i<=sweetsmax;i++) {
+                crds[i] += x_move[i];
+                sweets[i].posy+=sweets[i].sink
+                sweets[i].style.left=sweets[i].posx+lftrght[i]*Math.sin(crds[i])+'px';
+                sweets[i].style.top=sweets[i].posy+'px';
+
+                if (sweets[i].posy>=marginbottom-2*sweets[i].size || parseInt(sweets[i].style.left)>(marginright-3*lftrght[i])){
+                        if (sweetsingzone==1) {sweets[i].posx=randommaker(marginright-sweets[i].size)}
+                        if (sweetsingzone==2) {sweets[i].posx=randommaker(marginright/2-sweets[i].size)}
+                        if (sweetsingzone==3) {sweets[i].posx=randommaker(marginright/2-sweets[i].size)+marginright/4}
+                        if (sweetsingzone==4) {sweets[i].posx=randommaker(marginright/2-sweets[i].size)+marginright/2}
+                        sweets[i].posy=0
+                }
+        }
+        var timer=setTimeout("movesweets()",50)
+}
+
+      for (i=0;i<=sweetsmax;i++) {
+                    document.write("<span id='s"+i+"' class='ok' style='position:absolute;top:-"+sweetsmaxsize+"'>"+donut+"</span>")
+                    }
+
+var el = document.querySelectorAll('.ok');
+
+
+      
+function startFalling() {
+      var effect = el.forEach(function(add) {
+        add.style.visibility = "visible"
+      });
+      if (browserok) {
+              
+              initsweets();
+      }
+}
+
+
+</script>
+</html>
